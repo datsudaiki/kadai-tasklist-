@@ -52,9 +52,6 @@ class TasksController extends Controller
         ]);
         
         
-        Schema::task('users', function (Blueprint $task) {
-        $task->string('status', 10);
-        });
         
         
         
@@ -62,7 +59,7 @@ class TasksController extends Controller
         $task = new Task;
         $task->content = $request->content;
         $task->status = $request->status;
-        $taske->save();
+        $task->save();
         
 
         // トップページへリダイレクトさせる
@@ -98,7 +95,7 @@ class TasksController extends Controller
         $task = Task::findOrFail($id);
 
         // メッセージ編集ビューでそれを表示
-        return view('task.edit', [
+        return view('tasks.edit', [
             'task' => $task,
         ]);
     }
@@ -115,7 +112,7 @@ class TasksController extends Controller
         
         // バリデーション
         $request->validate([
-           $status->string('name', 100),
+          
             'content' => 'required|max:255',
         ]);
         
