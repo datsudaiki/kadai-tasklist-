@@ -7,12 +7,19 @@
     <table class="table table-bordered">
         <tr>
             <th>id</th>
-            <td>{{ $task->id }}</td>
+             <td>{{ $task->id }}</td>
+           
+           
         </tr>
         <tr>
-            <th>コンテンツ</th>
-            <td>{{ $task->content }}</td>
+            <th>ステータス</th>
+            <td>{{ $task->status }}</td>
+           
         </tr>
+        <tr>
+         <th>コンテンツ</th>
+         <td>{{ $task->content }}</td>
+         </tr>
     </table>
     
     {{-- タスク編集ページへのリンク --}}

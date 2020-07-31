@@ -49,6 +49,7 @@ class TasksController extends Controller
         $request->validate([
           
             'content' => 'required|max:255',
+            'status' => 'required|max:10',
         ]);
         
         
