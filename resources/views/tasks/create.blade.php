@@ -14,7 +14,7 @@
 
                 <div class="form-group">
                     
-                    {!! Form::label('status', 'タスク名:') !!}
+                    {!! Form::label('status', 'ステータス:') !!}
                     {!! Form::text('status', null, ['class' => 'form-control']) !!}
                      
                 </div>
