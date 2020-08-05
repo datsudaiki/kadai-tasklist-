@@ -15,30 +15,11 @@ class TasksController extends Controller
      */
     public function index()
     {
-    //   //$tasks=Task::all();
-    //     // メッセージ一覧ビューでそれを表示
-    //     return view('tasks.index', [
-    //         'tasks' => $tasks,
-            
-    //     ]);
-         $data = [];
-        if (\Auth::check()) { // 認証済みの場合
-            // 認証済みユーザを取得
-            $user = \Auth::user();
-            
-            //dd($user->tasks());
-            // ユーザの投稿の一覧を作成日時の降順で取得
-            $tasklists = $user->tasks()->orderBy('created_at', 'desc')->paginate(10);
-            
-
-            $data = [
-                'user' => $user,
-                'tasklists' => $tasklists,
-            ];
-        }
-
-        // Welcomeビューでそれらを表示
-        return view('welcome', $data);
+        $tasks=Task::all();
+        // メッセージ一覧ビューでそれを表示
+        return view('tasks.index', [
+            'tasks' => $tasks,
+        ]);
     
     }
 
@@ -71,15 +52,21 @@ class TasksController extends Controller
             'status' => 'required|max:10',
         ]);
         
-        
-        
-        
-        
          // メッセージを作成
         $task = new Task;
-        $task->content = $request->content;
-        $task->status = $request->status;
-        $task->save();
+        // 認証済みユーザ（閲覧者）の投稿として作成（リクエストされた値をもとに作成）
+        $request->user()->tasks()->create([
+           
+            'content' => $request->content,
+            'status' => $request->status,
+        ]);
+     
+         
+            
+        
+       // $task->content = $request->content;
+        //$task->status = $request->status;
+        //$task->save();
         
 
         // トップページへリダイレクトさせる
@@ -140,6 +127,7 @@ class TasksController extends Controller
      // idの値でメッセージを検索して取得
         $task = Task::findOrFail($id);
         // メッセージを更新
+        
         $task->content = $request->content;
           $task->status = $request->status;
         $task->save();

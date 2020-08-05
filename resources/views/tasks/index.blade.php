@@ -27,7 +27,5 @@
     @endif
      {{-- タスクページへのリンク --}}
     {!! link_to_route('tasks.create', '新規タスクの投稿', [], ['class' => 'btn btn-primary']) !!}
-    {{-- ユーザ一覧 --}}
-    @include('users.users')
 
 @endsection
