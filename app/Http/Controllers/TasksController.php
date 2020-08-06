@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 
 use App\Task;
 
+//use App\Http\Controllers\User;
+use App\User;
+
+
 class TasksController extends Controller
 {
     /**
@@ -15,13 +19,22 @@ class TasksController extends Controller
      */
     public function index()
     {
-        $tasks=Task::all();
-        // メッセージ一覧ビューでそれを表示
-        return view('tasks.index', [
-            'tasks' => $tasks,
-        ]);
-    
+        $data = [];
+        if (\Auth::check()) { // 認証済みの場合
+            // 認証済みユーザを取得
+            $user = \Auth::user();
+            // タスクの投稿の一覧を作成日時の降順で取得
+            $tasks = $user->tasks()->orderBy('created_at', 'desc')->paginate(10);
+
+            $data = [
+                'user' => $user,
+                'tasks' => $tasks,
+            ];
+        }
+        // Welcomeビューでそれらを表示
+        return view('welcome', $data);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -31,7 +44,7 @@ class TasksController extends Controller
     public function create()
     {
         $task= new Task;
-         // メッセージ作成ビューを表示
+         // タスク作成ビューを表示
         return view('tasks.create', [
             'task' => $task,
             ]);
@@ -52,7 +65,7 @@ class TasksController extends Controller
             'status' => 'required|max:10',
         ]);
         
-         // メッセージを作成
+         // タスクを作成
         $task = new Task;
         // 認証済みユーザ（閲覧者）の投稿として作成（リクエストされた値をもとに作成）
         $request->user()->tasks()->create([
@@ -81,11 +94,18 @@ class TasksController extends Controller
      */
     public function show($id)
     {
-        // idの値でメッセージを検索して取得
+        // idの値でタスクを検索して取得
         $task = Task::findOrFail($id);
 
-        // メッセージ詳細ビューでそれを表示
+        // 関係するモデルの件数をロード
+        //$task->loadRelationshipCounts();
+
+        
+        //$tasks = $task->tasks()->orderBy('created_at', 'desc')->paginate(10);
+
+       
         return view('tasks.show', [
+            //'user' => $user,
             'task' => $task,
         ]);
     }
@@ -98,10 +118,10 @@ class TasksController extends Controller
      */
     public function edit($id)
     {
-         // idの値でメッセージを検索して取得
+         // idの値でタスクを検索して取得
         $task = Task::findOrFail($id);
 
-        // メッセージ編集ビューでそれを表示
+        // タスク編集ビューでそれを表示
         return view('tasks.edit', [
             'task' => $task,
         ]);
@@ -124,7 +144,7 @@ class TasksController extends Controller
             'status' => 'required|max:10',
         ]);
         
-     // idの値でメッセージを検索して取得
+     // idの値でタスクを検索して取得
         $task = Task::findOrFail($id);
         // メッセージを更新
         
@@ -144,10 +164,13 @@ class TasksController extends Controller
      */
     public function destroy($id)
     {
-        // idの値でメッセージを検索して取得
-        $task = Task::findOrFail($id);
-        // メッセージを削除
-        $task->delete();
+        // idの値で投稿を検索して取得
+        $task = \App\Task::findOrFail($id);
+
+        // 認証済みユーザ（閲覧者）がその投稿の所有者である場合は、投稿を削除
+        if (\Auth::id() === $task->user_id) {
+            $task->delete();
+        }
 
         // トップページへリダイレクトさせる
         return redirect('/');
