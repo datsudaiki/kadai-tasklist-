@@ -19,7 +19,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::resource('users', 'UsersController', ['only' => ['index', 'show']]);
 
-    Route::resource('tasks', 'TasksController', ['only' => ['store', 'destroy']]);
+    Route::resource('tasks', 'TasksController', ['only' => ['store', 'destroy','create','task','edit']]);
     Route::group(['prefix' => 'users/{id}'], function () {
         
         Route::post('follow', 'UserFollowController@store')->name('user.follow');

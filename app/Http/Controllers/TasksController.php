@@ -102,12 +102,21 @@ class TasksController extends Controller
 
         
         //$tasks = $task->tasks()->orderBy('created_at', 'desc')->paginate(10);
-
-       
-        return view('tasks.show', [
+        if (\Auth::id() === $task->user_id) {
+            return view('tasks.show', [
             //'user' => $user,
             'task' => $task,
         ]);
+
+
+        }
+       
+        // return view('tasks.show', [
+        //     //'user' => $user,
+        //     'task' => $task,
+        // ]);
+         // トップページへリダイレクトさせる
+        return redirect('/');
     }
 
     /**
@@ -120,11 +129,20 @@ class TasksController extends Controller
     {
          // idの値でタスクを検索して取得
         $task = Task::findOrFail($id);
-
-        // タスク編集ビューでそれを表示
+        
+        if (\Auth::id() === $task->user_id) {
+            // タスク編集ビューでそれを表示
         return view('tasks.edit', [
             'task' => $task,
         ]);
+        }
+
+        // タスク編集ビューでそれを表示
+        //return view('tasks.edit', [
+          //  'task' => $task,
+        //]);
+        // トップページへリダイレクトさせる
+        return redirect('/');
     }
 
     /**
@@ -146,11 +164,16 @@ class TasksController extends Controller
         
      // idの値でタスクを検索して取得
         $task = Task::findOrFail($id);
+        
+        if (\Auth::id() === $task->user_id) {
+            
+        
         // メッセージを更新
         
         $task->content = $request->content;
           $task->status = $request->status;
         $task->save();
+        }
 
         // トップページへリダイレクトさせる
         return redirect('/');
